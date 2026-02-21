@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon FC - Process Assistant Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --amazon-orange: #FF9900;
+      --amazon-orange-dark: #E88B00;
+      --amazon-blue: #232F3E;
+      --amazon-blue-light: #37475A;
+      --amazon-teal: #00A8A8;
+      --bg-dark: #0D1117;
+      --bg-card: #161B22;
+      --text-primary: #F0F6FC;
+      --text-secondary: #8B949E;
+      --text-muted: #6E7681;
+      --border-color: #30363D;
+      --success: #3FB950;
+      --warning: #D29922;
+      --danger: #F85149;
+      --purple: #8B5CF6;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: 
+        radial-gradient(ellipse at 20% 80%, rgba(255, 153, 0, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 168, 168, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(35, 47, 62, 0.8) 0%, var(--bg-dark) 70%);
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--amazon-blue) 0%, var(--amazon-blue-light) 100%);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 4px solid var(--amazon-orange);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--amazon-orange);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.75rem;
+      color: var(--amazon-blue);
+      box-shadow: 0 4px 15px rgba(255, 153, 0, 0.4);
+    }
+
+    .logo-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .logo-text span {
+      color: var(--amazon-orange);
+    }
+
+    .header-time {
+      text-align: right;
+    }
+
+    .current-time {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--amazon-orange);
+    }
+
+    .current-date {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .welcome-section {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .welcome-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--amazon-orange) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .nav-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 2.5rem;
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      min-height: 350px;
+    }
+
+    .nav-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .nav-card.pph::before { background: var(--amazon-orange); }
+    .nav-card.sort::before { background: var(--amazon-teal); }
+    .nav-card.pick::before { background: var(--purple); }
+
+    .nav-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .nav-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .nav-card.pph:hover {
+      border-color: var(--amazon-orange);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 153, 0, 0.15);
+    }
+
+    .nav-card.sort:hover {
+      border-color: var(--amazon-teal);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 168, 168, 0.15);
+    }
+
+    .nav-card.pick:hover {
+      border-color: var(--purple);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(139, 92, 246, 0.15);
+    }
+
+    .nav-card-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 2.5rem;
+    }
+
+    .nav-card.pph .nav-card-icon {
+      background: linear-gradient(135deg, var(--amazon-orange) 0%, var(--amazon-orange-dark) 100%);
+      box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
+    }
+
+    .nav-card.sort .nav-card-icon {
+      background: linear-gradient(135deg, var(--amazon-teal) 0%, #008080 100%);
+      box-shadow: 0 8px 20px rgba(0, 168, 168, 0.3);
+    }
+
+    .nav-card.pick .nav-card-icon {
+      background: linear-gradient(135deg, var(--purple) 0%, #7C3AED 100%);
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .nav-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-card-description {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .nav-card-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-tag {
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .nav-card.pph .feature-tag {
+      background: rgba(255, 153, 0, 0.15);
+      border: 1px solid rgba(255, 153, 0, 0.3);
+      color: var(--amazon-orange);
+    }
+
+    .nav-card.sort .feature-tag {
+      background: rgba(0, 168, 168, 0.15);
+      border: 1px solid rgba(0, 168, 168, 0.3);
+      color: var(--amazon-teal);
+    }
+
+    .nav-card.pick .feature-tag {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: var(--purple);
+    }
+
+    .nav-card-arrow {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      width: 50px;
+      height: 50px;
+      background: var(--amazon-blue-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .nav-card:hover .nav-card-arrow {
+      transform: translateX(5px);
+    }
+
+    .nav-card.pph:hover .nav-card-arrow { background: var(--amazon-orange); }
+    .nav-card.sort:hover .nav-card-arrow { background: var(--amazon-teal); }
+    .nav-card.pick:hover .nav-card-arrow { background: var(--purple); }
+
+    .nav-card-arrow svg {
+      width: 24px;
+      height: 24px;
+      color: var(--text-primary);
+    }
+
+    .coming-soon {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: linear-gradient(135deg, var(--warning) 0%, #b8860b 100%);
+      color: var(--bg-dark);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-card.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .nav-card.disabled:hover {
+      transform: none;
+      border-color: var(--border-color);
+      box-shadow: none;
+    }
+
+    .nav-card.disabled:hover::before {
+      transform: scaleX(0);
+    }
+
+    .nav-card.disabled:hover .nav-card-arrow {
+      transform: none;
+      background: var(--amazon-blue-light);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1100px) {
+      .nav-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .header-time {
+        text-align: center;
+      }
+
+      .welcome-title {
+        font-size: 2.5rem;
+      }
+
+      .container {
+        padding: 2rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">PA</div>
+      <div class="logo-text">Process <span>Assistant</span> Dashboard</div>
+    </div>
+    <div class="header-time">
+      <div class="current-time" id="currentTime">--:--:--</div>
+      <div class="current-date" id="currentDate">Loading...</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="welcome-section">
+      <h1 class="welcome-title">Welcome, Process Assistant</h1>
+      <p class="welcome-subtitle">Select a module below to manage your shift operations, track staffing, and monitor performance.</p>
+    </div>
+
+    <div class="nav-grid">
+      <!-- PPH Flow Staffing Card -->
+      <a href="amazon-pa-pph-flow.html" class="nav-card pph">
+        <div class="nav-card-icon">📊</div>
+        <h2 class="nav-card-title">PPH Flow Staffing</h2>
+        <p class="nav-card-description">
+          Manage inbound sort operations including induct, stow, P2B staffing, cluster volumes, and real-time flow tracking.
+        </p>
+        <div class="nav-card-features">
+          <span class="feature-tag">Belt Run Time</span>
+          <span class="feature-tag">HC Tracking</span>
+          <span class="feature-tag">Flow Rates</span>
+          <span class="feature-tag">Break Status</span>
+        </div>
+        <div class="nav-card-arrow">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Sort Wash Card -->
+      <a href="amazon-pa-sort-wash.html" class="nav-card sort disabled">
+        <span class="coming-soon">Coming Soon</span>
+        <div class="nav-card-icon">🔄</div>
+        <h2 class="nav-card-title">Sort Wash</h2>
+        <p class="nav-card-description">
+          Track sort wash operations, monitor throughput, manage staffing levels, and ensure smooth sortation flow.
+        </p>
+        <div class="nav-card-features">
+          <span class="feature-tag">Sort Rates</span>
+          <span class="feature-tag">Staffing</span>
+          <span class="feature-tag">Throughput</span>
+        </div>
+        <div class="nav-card-arrow">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Pick Wash Card -->
+      <a href="amazon-pa-pick-wash.html" class="nav-card pick disabled">
+        <span class="coming-soon">Coming Soon</span>
+        <div class="nav-card-icon">🎯</div>
+        <h2 class="nav-card-title">Pick Wash</h2>
+        <p class="nav-card-description">
+          Monitor outbound pick operations, manage picker staffing, track pick rates, and optimize labor allocation.
+        </p>
+        <div class="nav-card-features">
+          <span class="feature-tag">Pick Rates</span>
+          <span class="feature-tag">UPH Tracking</span>
+          <span class="feature-tag">Labor Planning</span>
+        </div>
+        <div class="nav-card-arrow">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="footer">
+    Process Assistant Dashboard • Built for FC Operations
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true 
+      });
+      document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+</body>
+</html>
