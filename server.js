@@ -12,6 +12,7 @@ const { initTwilio, sendAlertToAll } = require('./services/twilio');
 const { scanForTopMover } = require('./services/finnhub');
 const subscriberRoutes = require('./routes/subscribers');
 const adminRoutes = require('./routes/admin');
+const marketRoutes = require('./routes/market');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 app.use('/api', subscriberRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api', marketRoutes);
 app.use('/api/subscribe', subscribeLimiter);
 
 // Health check
