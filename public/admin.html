@@ -3,92 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SM Alerts — Admin Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>SM Stock Alerts — Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #0a0e17;
-            --card: #111827;
-            --border: #1e2d3d;
-            --green: #00e676;
-            --red: #ff3d57;
-            --blue: #3b82f6;
-            --text: #e8edf5;
-            --dim: #8899aa;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
-
-        .login-screen, .dashboard { max-width: 1000px; margin: 0 auto; }
-
-        /* Login */
-        .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; }
-        .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; }
-        .login-box h2 { margin-bottom: 24px; font-family: 'Space Mono', monospace; }
-        .login-box input { width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 1rem; margin-bottom: 16px; font-family: 'DM Sans', sans-serif; }
-        .login-box input:focus { outline: none; border-color: var(--green); }
-
-        .dashboard { display: none; }
-
-        h1 { font-family: 'Space Mono', monospace; font-size: 1.4rem; margin-bottom: 24px; }
-        h1 span { color: var(--green); }
-
-        /* Stat Cards */
-        .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
-        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-        .stat-card .label { font-size: 0.75rem; color: var(--dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-        .stat-card .value { font-family: 'Space Mono', monospace; font-size: 1.8rem; font-weight: 700; }
-        .stat-card .value.green { color: var(--green); }
-
-        /* Sections */
-        .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-        .section h2 { font-size: 1.1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-
-        /* Buttons */
-        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; transition: opacity 0.2s; }
-        .btn:hover { opacity: 0.85; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-green { background: var(--green); color: #0a0e17; }
-        .btn-blue { background: var(--blue); color: white; }
-        .btn-red { background: var(--red); color: white; }
-
-        /* Manual Alert Form */
-        .alert-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
-        .alert-form input { padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; }
-        .alert-form input:focus { outline: none; border-color: var(--blue); }
-        .alert-form .full-width { grid-column: 1 / -1; }
-
-        /* Table */
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th { text-align: left; padding: 10px 12px; color: var(--dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
-        td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-        .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
-        .badge-active { background: rgba(0,230,118,0.15); color: var(--green); }
-        .badge-inactive { background: rgba(255,61,87,0.15); color: var(--red); }
-
-        .action-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-
-        /* Status Messages */
-        .status { padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 0.9rem; display: none; }
-        .status.show { display: block; }
-        .status.success { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.2); }
-        .status.error { background: rgba(255,61,87,0.1); color: var(--red); border: 1px solid rgba(255,61,87,0.2); }
-
-        /* Scanner Results */
-        .scan-result { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 12px; }
-        .scan-result .ticker-big { font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--green); }
-        .scan-result .meta { color: var(--dim); font-size: 0.85rem; margin-top: 4px; }
-
-        @media (max-width: 600px) {
-            .alert-form { grid-template-columns: 1fr; }
-            .stat-row { grid-template-columns: 1fr 1fr; }
-        }
+        :root{--bg-dark:#0a0e17;--bg:#111827;--green:#00e676;--red:#ff3d57;--blue:#3b82f6;--text:#e8edf5;--dim:#8899aa;--border:#1e2d3d}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'DM Sans',sans-serif;background:var(--bg-dark);color:var(--text);padding:20px;max-width:900px;margin:0 auto}
+        h1{font-size:1.8rem;margin-bottom:24px;font-weight:700}h1 span{color:var(--green)}
+        h2{font-size:1.2rem;margin-bottom:12px}
+        .login-screen{display:flex;justify-content:center;align-items:center;min-height:80vh}
+        .login-box{background:var(--bg);padding:32px;border-radius:14px;border:1px solid var(--border);width:100%;max-width:360px;text-align:center}
+        .login-box h2{margin-bottom:20px}
+        .login-box input{width:100%;padding:14px;background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:1rem;margin-bottom:12px;font-family:'DM Sans',sans-serif}
+        .dashboard{display:none}
+        .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+        .stat-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+        .stat-card .label{font-size:0.75rem;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px}
+        .stat-card .value{font-family:'Space Mono',monospace;font-size:1.6rem;font-weight:700;margin-top:4px}
+        .stat-card .value.green{color:var(--green)}
+        .section{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+        .btn{padding:10px 20px;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.9rem;transition:opacity 0.2s}
+        .btn:disabled{opacity:0.5;cursor:not-allowed}
+        .btn-green{background:var(--green);color:#0a0e17}.btn-blue{background:var(--blue);color:white}.btn-red{background:var(--red);color:white}
+        .action-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+        .alert-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .alert-form input{padding:12px;background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.9rem;font-family:'DM Sans',sans-serif}
+        .alert-form input:focus{outline:none;border-color:var(--green)}
+        .alert-form .full-width{grid-column:1/-1}
+        .status{padding:10px;border-radius:8px;font-size:0.85rem;margin-top:12px;display:none}
+        .status.show{display:block}.status.success{background:rgba(0,230,118,0.1);color:var(--green)}.status.error{background:rgba(255,61,87,0.1);color:var(--red)}
+        table{width:100%;border-collapse:collapse;font-size:0.85rem;margin-top:12px}
+        th{text-align:left;padding:8px;color:var(--dim);border-bottom:1px solid var(--border);font-size:0.75rem;text-transform:uppercase}
+        td{padding:8px;border-bottom:1px solid rgba(30,45,61,0.5)}
+        .badge{padding:3px 8px;border-radius:4px;font-size:0.75rem;font-weight:700}
+        .badge-active{background:rgba(0,230,118,0.15);color:var(--green)}.badge-inactive{background:rgba(255,61,87,0.15);color:var(--red)}
+        .scan-result{background:var(--bg-dark);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px}
+        .scan-result .ticker-big{font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--green)}
+        .scan-result .meta{color:var(--dim);font-size:0.85rem;margin-top:4px}
+        @media(max-width:600px){.alert-form{grid-template-columns:1fr}.stat-row{grid-template-columns:1fr 1fr}}
     </style>
 </head>
 <body>
-
-    <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
             <h2>🔐 Admin Login</h2>
@@ -96,32 +51,22 @@
             <button class="btn btn-green" style="width:100%;" onclick="login()">Login</button>
         </div>
     </div>
-
-    <!-- Dashboard -->
     <div class="dashboard" id="dashboard">
         <h1>SM<span>.</span>Alerts — Admin</h1>
-
-        <!-- Stats -->
         <div class="stat-row">
-            <div class="stat-card">
-                <div class="label">Active Subscribers</div>
-                <div class="value green" id="dActiveSubscribers">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Today's Signups</div>
-                <div class="value" id="dTodaySignups">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Total Alerts Sent</div>
-                <div class="value" id="dTotalAlerts">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Total SMS Sent</div>
-                <div class="value" id="dTotalSMS">-</div>
-            </div>
+            <div class="stat-card"><div class="label">Active Subscribers</div><div class="value green" id="dActiveSubscribers">-</div></div>
+            <div class="stat-card"><div class="label">Today's Signups</div><div class="value" id="dTodaySignups">-</div></div>
+            <div class="stat-card"><div class="label">Total Alerts Sent</div><div class="value" id="dTotalAlerts">-</div></div>
+            <div class="stat-card"><div class="label">Total SMS Sent</div><div class="value" id="dTotalSMS">-</div></div>
         </div>
-
-        <!-- Scanner -->
+        <div class="section">
+            <h2>🤖 Project Hope Pick</h2>
+            <p style="color:var(--dim);font-size:0.85rem;margin-bottom:12px;">Picks sent from Project Hope appear here. Review and send.</p>
+            <button class="btn btn-blue" onclick="checkBridgePick()">Check for New Pick</button>
+            <div id="bridgeResult"></div>
+            <button class="btn btn-green" id="sendBridgeBtn" style="margin-top:12px;display:none;" onclick="sendBridgePick()">Send This Pick to All →</button>
+            <div class="status" id="bridgeStatus"></div>
+        </div>
         <div class="section">
             <h2>🔍 Stock Scanner</h2>
             <div class="action-row">
@@ -131,46 +76,32 @@
             <div id="scanResult"></div>
             <div class="status" id="scanStatus"></div>
         </div>
-
-        <!-- Manual Alert -->
         <div class="section">
             <h2>✏️ Manual Alert</h2>
-            <p style="color: var(--dim); font-size: 0.85rem; margin-bottom: 12px;">Override the scanner and send your own custom pick.</p>
+            <p style="color:var(--dim);font-size:0.85rem;margin-bottom:12px;">Override the scanner and send your own custom pick.</p>
             <div class="alert-form">
                 <input type="text" id="mTicker" placeholder="Ticker (e.g. AAPL)">
                 <input type="text" id="mCompany" placeholder="Company name">
                 <input type="number" id="mPrice" placeholder="Current price" step="0.01">
                 <input type="number" id="mPercent" placeholder="% change" step="0.01">
                 <input type="text" id="mSector" placeholder="Sector">
-                <input type="text" id="mReason" placeholder="Reason / note" class="full-width">
+                <input type="number" id="mEntry" placeholder="Entry price" step="0.01">
+                <input type="number" id="mTP" placeholder="Take profit" step="0.01">
+                <input type="number" id="mSL" placeholder="Stop loss" step="0.01">
+                <input type="text" id="mReason" placeholder="Reason / setup" class="full-width">
             </div>
-            <button class="btn btn-green" style="margin-top: 12px;" onclick="sendManualAlert()">Send Manual Alert →</button>
+            <button class="btn btn-green" style="margin-top:12px;" onclick="sendManualAlert()">Send Manual Alert →</button>
             <div class="status" id="manualStatus"></div>
         </div>
-
-        <!-- Recent Alerts -->
         <div class="section">
             <h2>📋 Recent Alerts</h2>
-            <table>
-                <thead>
-                    <tr><th>Date</th><th>Ticker</th><th>Price</th><th>Change</th><th>Sent To</th></tr>
-                </thead>
-                <tbody id="alertsTable"></tbody>
-            </table>
+            <table><thead><tr><th>Date</th><th>Ticker</th><th>Price</th><th>Change</th><th>Sent To</th></tr></thead><tbody id="alertsTable"></tbody></table>
         </div>
-
-        <!-- Subscribers -->
         <div class="section">
             <h2>👥 Subscribers</h2>
-            <table>
-                <thead>
-                    <tr><th>Phone</th><th>Name</th><th>Source</th><th>Status</th><th>Joined</th></tr>
-                </thead>
-                <tbody id="subscribersTable"></tbody>
-            </table>
+            <table><thead><tr><th>Phone</th><th>Name</th><th>Source</th><th>Status</th><th>Joined</th></tr></thead><tbody id="subscribersTable"></tbody></table>
         </div>
     </div>
-
     <script>
         let adminPwd = '';
         let lastScanPick = null;
@@ -181,10 +112,7 @@
         }
 
         async function apiCall(url, method = 'GET', body = null) {
-            const opts = {
-                method,
-                headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPwd }
-            };
+            const opts = { method, headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPwd } };
             if (body) opts.body = JSON.stringify(body);
             const res = await fetch(url, opts);
             if (res.status === 401) {
@@ -198,7 +126,7 @@
 
         function showStatus(id, type, msg) {
             const el = document.getElementById(id);
-            el.className = `status show ${type}`;
+            el.className = 'status show ' + type;
             el.textContent = msg;
             setTimeout(() => el.classList.remove('show'), 5000);
         }
@@ -206,127 +134,117 @@
         async function loadDashboard() {
             const data = await apiCall('/api/admin/dashboard');
             if (!data) return;
-
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
-
-            // Stats
             const active = data.subscribers.find(s => s.status === 'active');
             document.getElementById('dActiveSubscribers').textContent = active ? active.count : '0';
             document.getElementById('dTodaySignups').textContent = data.todaySignups;
             document.getElementById('dTotalAlerts').textContent = data.recentAlerts.length;
             document.getElementById('dTotalSMS').textContent = data.totalSMS;
-
-            // Recent alerts table
-            const alertsHtml = data.recentAlerts.map(a => `
-                <tr>
-                    <td>${new Date(a.sent_at).toLocaleDateString()}</td>
-                    <td><strong>${a.ticker}</strong></td>
-                    <td>$${parseFloat(a.alert_price).toFixed(2)}</td>
-                    <td style="color: ${parseFloat(a.percent_change) >= 0 ? 'var(--green)' : 'var(--red)'}">
-                        ${parseFloat(a.percent_change) >= 0 ? '+' : ''}${parseFloat(a.percent_change).toFixed(2)}%
-                    </td>
-                    <td>${a.total_sent}</td>
-                </tr>
-            `).join('');
+            const alertsHtml = data.recentAlerts.map(a => '<tr><td>' + new Date(a.sent_at).toLocaleDateString() + '</td><td><strong>' + a.ticker + '</strong></td><td>$' + parseFloat(a.alert_price).toFixed(2) + '</td><td style="color:' + (parseFloat(a.percent_change) >= 0 ? 'var(--green)' : 'var(--red)') + '">' + (parseFloat(a.percent_change) >= 0 ? '+' : '') + parseFloat(a.percent_change).toFixed(2) + '%</td><td>' + a.total_sent + '</td></tr>').join('');
             document.getElementById('alertsTable').innerHTML = alertsHtml || '<tr><td colspan="5" style="color:var(--dim)">No alerts sent yet</td></tr>';
-
-            // Load subscribers
             loadSubscribers();
         }
 
         async function loadSubscribers() {
             const subs = await apiCall('/api/admin/subscribers');
             if (!subs) return;
-
-            const html = subs.map(s => `
-                <tr>
-                    <td style="font-family: 'Space Mono', monospace; font-size: 0.8rem;">${s.phone}</td>
-                    <td>${s.name || '-'}</td>
-                    <td>${s.source}</td>
-                    <td><span class="badge ${s.status === 'active' ? 'badge-active' : 'badge-inactive'}">${s.status}</span></td>
-                    <td>${new Date(s.created_at).toLocaleDateString()}</td>
-                </tr>
-            `).join('');
+            const html = subs.map(s => '<tr><td style="font-family:Space Mono,monospace;font-size:0.8rem;">' + s.phone + '</td><td>' + (s.name || '-') + '</td><td>' + s.source + '</td><td><span class="badge ' + (s.status === 'active' ? 'badge-active' : 'badge-inactive') + '">' + s.status + '</span></td><td>' + new Date(s.created_at).toLocaleDateString() + '</td></tr>').join('');
             document.getElementById('subscribersTable').innerHTML = html || '<tr><td colspan="5" style="color:var(--dim)">No subscribers yet</td></tr>';
         }
 
         async function runScan() {
             showStatus('scanStatus', 'success', 'Scanning 40+ tickers...');
             const data = await apiCall('/api/admin/scan', 'POST');
-            if (!data || !data.pick) {
-                showStatus('scanStatus', 'error', 'No picks found. Market may be closed.');
-                return;
-            }
-
+            if (!data || !data.pick) { showStatus('scanStatus', 'error', 'No picks found.'); return; }
             lastScanPick = data.pick;
             document.getElementById('sendAutoBtn').disabled = false;
-
             const sign = data.pick.percentChange >= 0 ? '+' : '';
             const color = data.pick.percentChange >= 0 ? 'var(--green)' : 'var(--red)';
-
             let topMoversHtml = '';
             if (data.pick.topMovers) {
-                topMoversHtml = '<div style="margin-top:12px; font-size:0.8rem; color:var(--dim);">Top 5 movers: ' +
-                    data.pick.topMovers.map(m => 
-                        `<span style="color:${m.percentChange >= 0 ? 'var(--green)' : 'var(--red)'}">${m.ticker} ${m.percentChange >= 0 ? '+' : ''}${m.percentChange.toFixed(2)}%</span>`
-                    ).join(' · ') + '</div>';
+                topMoversHtml = '<div style="margin-top:12px;font-size:0.8rem;color:var(--dim);">Top 5: ' + data.pick.topMovers.map(m => '<span style="color:' + (m.percentChange >= 0 ? 'var(--green)' : 'var(--red)') + '">' + m.ticker + ' ' + (m.percentChange >= 0 ? '+' : '') + m.percentChange.toFixed(2) + '%</span>').join(' · ') + '</div>';
             }
-
-            document.getElementById('scanResult').innerHTML = `
-                <div class="scan-result">
-                    <div class="ticker-big">${data.pick.direction} ${data.pick.ticker}</div>
-                    <div style="font-size:1.1rem; margin-top:4px;">${data.pick.companyName}</div>
-                    <div style="font-family:'Space Mono',monospace; font-size:1.2rem; color:${color}; margin-top:8px;">
-                        $${data.pick.currentPrice.toFixed(2)} (${sign}${data.pick.percentChange.toFixed(2)}%)
-                    </div>
-                    <div class="meta">Sector: ${data.pick.sector} · High: $${data.pick.high.toFixed(2)} · Low: $${data.pick.low.toFixed(2)}</div>
-                    <div class="meta">${data.pick.reason}</div>
-                    ${topMoversHtml}
-                </div>
-            `;
-
-            showStatus('scanStatus', 'success', 'Scanner complete! Review the pick and click "Send Alert to All" to blast it out.');
+            document.getElementById('scanResult').innerHTML = '<div class="scan-result"><div class="ticker-big">' + (data.pick.direction || '📈') + ' ' + data.pick.ticker + '</div><div style="font-size:1.1rem;margin-top:4px;">' + data.pick.companyName + '</div><div style="font-family:Space Mono,monospace;font-size:1.2rem;color:' + color + ';margin-top:8px;">$' + data.pick.currentPrice.toFixed(2) + ' (' + sign + data.pick.percentChange.toFixed(2) + '%)</div><div class="meta">Sector: ' + data.pick.sector + ' · High: $' + data.pick.high.toFixed(2) + ' · Low: $' + data.pick.low.toFixed(2) + '</div><div class="meta">' + data.pick.reason + '</div>' + topMoversHtml + '</div>';
+            showStatus('scanStatus', 'success', 'Scanner complete! Review and click Send Alert.');
         }
 
         async function sendAutoAlert() {
             if (!confirm('Send this alert to ALL active subscribers?')) return;
-
             const data = await apiCall('/api/admin/send-alert', 'POST');
-            if (data) {
-                showStatus('scanStatus', 'success', `Alert sent! ${data.sentCount} delivered, ${data.failCount} failed.`);
-                loadDashboard();
-            }
+            if (data) { showStatus('scanStatus', 'success', 'Alert sent! ' + data.sentCount + ' delivered, ' + data.failCount + ' failed.'); loadDashboard(); }
         }
 
         async function sendManualAlert() {
             const ticker = document.getElementById('mTicker').value;
             const price = document.getElementById('mPrice').value;
             const percent = document.getElementById('mPercent').value;
-
-            if (!ticker || !price || !percent) {
-                showStatus('manualStatus', 'error', 'Ticker, price, and % change are required.');
-                return;
-            }
-
-            if (!confirm(`Send ${ticker} alert to ALL subscribers?`)) return;
-
+            if (!ticker || !price || !percent) { showStatus('manualStatus', 'error', 'Ticker, price, and % change are required.'); return; }
+            if (!confirm('Send ' + ticker + ' alert to ALL subscribers?')) return;
             const data = await apiCall('/api/admin/send-alert', 'POST', {
                 ticker: ticker.toUpperCase(),
                 companyName: document.getElementById('mCompany').value || ticker.toUpperCase(),
                 currentPrice: price,
                 percentChange: percent,
                 sector: document.getElementById('mSector').value,
+                entry: document.getElementById('mEntry').value,
+                takeProfit: document.getElementById('mTP').value,
+                stopLoss: document.getElementById('mSL').value,
                 reason: document.getElementById('mReason').value
             });
-
             if (data) {
-                showStatus('manualStatus', 'success', `Manual alert sent! ${data.sentCount} delivered.`);
-                // Clear form
-                ['mTicker','mCompany','mPrice','mPercent','mSector','mReason'].forEach(id => document.getElementById(id).value = '');
+                showStatus('manualStatus', 'success', 'Manual alert sent! ' + data.sentCount + ' delivered.');
+                ['mTicker','mCompany','mPrice','mPercent','mSector','mEntry','mTP','mSL','mReason'].forEach(id => document.getElementById(id).value = '');
                 loadDashboard();
             }
         }
+
+        async function checkBridgePick() {
+            const data = await apiCall('/api/bridge/pending-pick');
+            if (!data || !data.pick) {
+                showStatus('bridgeStatus', 'error', 'No pending pick from Project Hope.');
+                document.getElementById('sendBridgeBtn').style.display = 'none';
+                return;
+            }
+            const p = data.pick;
+            const sign = p.percentChange >= 0 ? '+' : '';
+            const color = p.percentChange >= 0 ? 'var(--green)' : 'var(--red)';
+            let details = '';
+            if (p.entry) details += '🎯 Entry: $' + parseFloat(p.entry).toFixed(2) + '<br>';
+            if (p.takeProfit) details += '✅ Take Profit: $' + parseFloat(p.takeProfit).toFixed(2) + '<br>';
+            if (p.stopLoss) details += '🛑 Stop Loss: $' + parseFloat(p.stopLoss).toFixed(2) + '<br>';
+            if (p.setup) details += '📊 ' + p.setup + '<br>';
+            document.getElementById('bridgeResult').innerHTML = '<div class="scan-result"><div class="ticker-big">📈 ' + p.ticker + '</div><div style="font-size:1.1rem;margin-top:4px;">' + p.company + '</div><div style="font-family:Space Mono,monospace;font-size:1.2rem;color:' + color + ';margin-top:8px;">$' + parseFloat(p.price).toFixed(2) + ' (' + sign + parseFloat(p.percentChange).toFixed(2) + '%)</div><div class="meta" style="margin-top:8px;">' + details + '</div><div class="meta">Received: ' + new Date(p.receivedAt).toLocaleString() + '</div></div>';
+            document.getElementById('sendBridgeBtn').style.display = 'inline-block';
+            showStatus('bridgeStatus', 'success', 'Pick received from Project Hope!');
+        }
+
+        async function sendBridgePick() {
+            if (!confirm('Send this Project Hope pick to ALL subscribers?')) return;
+            const pickData = await apiCall('/api/bridge/pending-pick');
+            if (!pickData || !pickData.pick) return;
+            const p = pickData.pick;
+            const data = await apiCall('/api/admin/send-alert', 'POST', {
+                ticker: p.ticker,
+                companyName: p.company,
+                currentPrice: p.price,
+                percentChange: p.percentChange,
+                sector: p.sector,
+                entry: p.entry,
+                takeProfit: p.takeProfit,
+                stopLoss: p.stopLoss,
+                reason: p.setup
+            });
+            if (data) {
+                showStatus('bridgeStatus', 'success', 'Alert sent! ' + data.sentCount + ' delivered.');
+                await apiCall('/api/bridge/pending-pick', 'DELETE');
+                document.getElementById('sendBridgeBtn').style.display = 'none';
+                document.getElementById('bridgeResult').innerHTML = '';
+                loadDashboard();
+            }
+        }
+
+        loadDashboard();
     </script>
 </body>
 </html>
