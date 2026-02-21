@@ -28,24 +28,35 @@ async function sendSMS(to, message) {
 
 // Format the alert message
 function formatAlertMessage(pick) {
-    const arrow = pick.percentChange >= 0 ? '🟢' : '🔴';
-    const sign = pick.percentChange >= 0 ? '+' : '';
+    const sign = pick.percentChange >= 0 ? "+" : "";
 
-    return `${pick.direction} SM Stock Alert ${pick.direction}
+    let price = pick.currentPrice ? pick.currentPrice.toFixed(2) : pick.price ? pick.price.toFixed(2) : "0.00";
 
-${pick.ticker} - ${pick.companyName}
-💰 $${pick.currentPrice.toFixed(2)} (${sign}${pick.percentChange.toFixed(2)}%)
-📊 High: $${pick.high.toFixed(2)} | Low: $${pick.low.toFixed(2)}
-🏷️ Sector: ${pick.sector}
+    let msg = "📈 SM Stock Alert 📈\n\n";
+    msg += pick.ticker + " - " + (pick.companyName || pick.company || pick.ticker) + "\n";
+    msg += "💰 $" + price + " (" + sign + pick.percentChange.toFixed(2) + "%)\n";
+    msg += "🏷️ Sector: " + (pick.sector || "N/A");
 
-${pick.reason}
+    if (pick.entry) {
+        msg += "\n\n🎯 Entry: $" + parseFloat(pick.entry).toFixed(2);
+    }
+    if (pick.takeProfit) {
+        msg += "\n✅ Take Profit: $" + parseFloat(pick.takeProfit).toFixed(2);
+    }
+    if (pick.stopLoss) {
+        msg += "\n🛑 Stop Loss: $" + parseFloat(pick.stopLoss).toFixed(2);
+    }
 
-⚡ Want the full scanner? Reply UPGRADE
+    if (pick.setup) {
+        msg += "\n\n📊 " + pick.setup;
+    } else if (pick.reason) {
+        msg += "\n\n📊 " + pick.reason;
+    }
 
-Reply STOP to unsubscribe
-— SM Digital Solutions`;
+    msg += "\n\n— SM Digital Solutions\nReply STOP to unsubscribe";
+
+    return msg;
 }
-
 // Blast alert to all active subscribers
 async function sendAlertToAll(pick) {
     const message = formatAlertMessage(pick);
