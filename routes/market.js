@@ -12,7 +12,7 @@ router.get('/market', async (req, res) => {
             return res.json(cachedQuotes);
         }
 
-        const tickers = ['NVDA', 'AAPL', 'TSLA', 'AMD', 'PLTR', 'META', 'SOFI', 'GOOGL', 'COIN', 'AMZN'];
+        const tickers = ['NVDA', 'AAPL', 'TSLA', 'AMD', 'PLTR', 'META', 'SOFI', 'GOOGL', 'COIN', 'AMZN', 'MSFT', 'NFLX', 'DIS', 'BA', 'UBER', 'SQ', 'SNAP', 'RIVN', 'MARA', 'NIO'];
         const quotes = [];
 
         for (const ticker of tickers) {
@@ -26,7 +26,7 @@ router.get('/market', async (req, res) => {
                     });
                 }
             } catch (e) {}
-            await new Promise(r => setTimeout(r, 200));
+            await new Promise(r => setTimeout(r, 150));
         }
 
         cachedQuotes = quotes;
