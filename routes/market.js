@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { fetchQuote, SCAN_TICKERS } = require('../services/finnhub');
+const { fetchQuote } = require('../services/finnhub');
 
-// Cache quotes for 60 seconds to avoid rate limits
 let cachedQuotes = null;
 let lastFetch = 0;
 
@@ -22,6 +21,7 @@ router.get('/market', async (req, res) => {
                 if (q.currentPrice > 0) {
                     quotes.push({
                         symbol: q.ticker,
+                        price: q.currentPrice,
                         percent: q.percentChange
                     });
                 }
