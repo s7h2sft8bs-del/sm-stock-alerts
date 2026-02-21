@@ -8,7 +8,7 @@ async function loadTicker() {
             data.forEach(q => {
                 const cls = q.percent >= 0 ? 'up' : 'down';
                 const sign = q.percent >= 0 ? '+' : '';
-                html += '<div class="ticker-item"><span class="symbol">' + q.symbol + '</span> <span style="color:#8899aa;">$' + q.price.toFixed(2) + '</span> <span class="' + cls + '">' + sign + q.percent.toFixed(2) + '%</span></div>';
+                html += '<div class="ticker-item"><span class="symbol">' + q.symbol + '</span> <span style="color:#e8edf5;">$' + q.price.toFixed(2) + '</span> <span class="' + cls + '">' + sign + q.percent.toFixed(2) + '%</span></div>';
             });
             tape.innerHTML = html + html;
         }
