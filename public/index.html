@@ -1,478 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amazon FC - Process Assistant Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --amazon-orange: #FF9900;
-      --amazon-orange-dark: #E88B00;
-      --amazon-blue: #232F3E;
-      --amazon-blue-light: #37475A;
-      --amazon-teal: #00A8A8;
-      --bg-dark: #0D1117;
-      --bg-card: #161B22;
-      --text-primary: #F0F6FC;
-      --text-secondary: #8B949E;
-      --text-muted: #6E7681;
-      --border-color: #30363D;
-      --success: #3FB950;
-      --warning: #D29922;
-      --danger: #F85149;
-      --purple: #8B5CF6;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Barlow', sans-serif;
-      background: var(--bg-dark);
-      color: var(--text-primary);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    .bg-animation {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background: 
-        radial-gradient(ellipse at 20% 80%, rgba(255, 153, 0, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(0, 168, 168, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(35, 47, 62, 0.8) 0%, var(--bg-dark) 70%);
-    }
-
-    .header {
-      background: linear-gradient(135deg, var(--amazon-blue) 0%, var(--amazon-blue-light) 100%);
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 4px solid var(--amazon-orange);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .logo-icon {
-      width: 56px;
-      height: 56px;
-      background: var(--amazon-orange);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1.75rem;
-      color: var(--amazon-blue);
-      box-shadow: 0 4px 15px rgba(255, 153, 0, 0.4);
-    }
-
-    .logo-text {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 2rem;
-      font-weight: 700;
-    }
-
-    .logo-text span {
-      color: var(--amazon-orange);
-    }
-
-    .header-time {
-      text-align: right;
-    }
-
-    .current-time {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 600;
-      color: var(--amazon-orange);
-    }
-
-    .current-date {
-      color: var(--text-secondary);
-      font-size: 1rem;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 3rem 2rem;
-    }
-
-    .welcome-section {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-
-    .welcome-title {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 3.5rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, var(--text-primary) 0%, var(--amazon-orange) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .welcome-subtitle {
-      font-size: 1.25rem;
-      color: var(--text-secondary);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .nav-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-    }
-
-    .nav-card {
-      background: var(--bg-card);
-      border-radius: 20px;
-      padding: 2.5rem;
-      border: 2px solid var(--border-color);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      min-height: 350px;
-    }
-
-    .nav-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 5px;
-      transform: scaleX(0);
-      transition: transform 0.3s ease;
-    }
-
-    .nav-card.pph::before { background: var(--amazon-orange); }
-    .nav-card.sort::before { background: var(--amazon-teal); }
-    .nav-card.pick::before { background: var(--purple); }
-
-    .nav-card:hover {
-      transform: translateY(-8px);
-    }
-
-    .nav-card:hover::before {
-      transform: scaleX(1);
-    }
-
-    .nav-card.pph:hover {
-      border-color: var(--amazon-orange);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 153, 0, 0.15);
-    }
-
-    .nav-card.sort:hover {
-      border-color: var(--amazon-teal);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 168, 168, 0.15);
-    }
-
-    .nav-card.pick:hover {
-      border-color: var(--purple);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(139, 92, 246, 0.15);
-    }
-
-    .nav-card-icon {
-      width: 80px;
-      height: 80px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-      font-size: 2.5rem;
-    }
-
-    .nav-card.pph .nav-card-icon {
-      background: linear-gradient(135deg, var(--amazon-orange) 0%, var(--amazon-orange-dark) 100%);
-      box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
-    }
-
-    .nav-card.sort .nav-card-icon {
-      background: linear-gradient(135deg, var(--amazon-teal) 0%, #008080 100%);
-      box-shadow: 0 8px 20px rgba(0, 168, 168, 0.3);
-    }
-
-    .nav-card.pick .nav-card-icon {
-      background: linear-gradient(135deg, var(--purple) 0%, #7C3AED 100%);
-      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
-    }
-
-    .nav-card-title {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .nav-card-description {
-      color: var(--text-secondary);
-      font-size: 1rem;
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-      flex-grow: 1;
-    }
-
-    .nav-card-features {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .feature-tag {
-      padding: 0.35rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .nav-card.pph .feature-tag {
-      background: rgba(255, 153, 0, 0.15);
-      border: 1px solid rgba(255, 153, 0, 0.3);
-      color: var(--amazon-orange);
-    }
-
-    .nav-card.sort .feature-tag {
-      background: rgba(0, 168, 168, 0.15);
-      border: 1px solid rgba(0, 168, 168, 0.3);
-      color: var(--amazon-teal);
-    }
-
-    .nav-card.pick .feature-tag {
-      background: rgba(139, 92, 246, 0.15);
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      color: var(--purple);
-    }
-
-    .nav-card-arrow {
-      position: absolute;
-      bottom: 2rem;
-      right: 2rem;
-      width: 50px;
-      height: 50px;
-      background: var(--amazon-blue-light);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-
-    .nav-card:hover .nav-card-arrow {
-      transform: translateX(5px);
-    }
-
-    .nav-card.pph:hover .nav-card-arrow { background: var(--amazon-orange); }
-    .nav-card.sort:hover .nav-card-arrow { background: var(--amazon-teal); }
-    .nav-card.pick:hover .nav-card-arrow { background: var(--purple); }
-
-    .nav-card-arrow svg {
-      width: 24px;
-      height: 24px;
-      color: var(--text-primary);
-    }
-
-    .coming-soon {
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
-      background: linear-gradient(135deg, var(--warning) 0%, #b8860b 100%);
-      color: var(--bg-dark);
-      padding: 0.35rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .nav-card.disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .nav-card.disabled:hover {
-      transform: none;
-      border-color: var(--border-color);
-      box-shadow: none;
-    }
-
-    .nav-card.disabled:hover::before {
-      transform: scaleX(0);
-    }
-
-    .nav-card.disabled:hover .nav-card-arrow {
-      transform: none;
-      background: var(--amazon-blue-light);
-    }
-
-    .footer {
-      text-align: center;
-      padding: 3rem 2rem;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 1100px) {
-      .nav-grid {
-        grid-template-columns: 1fr;
-        max-width: 500px;
-        margin: 0 auto;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-
-      .header-time {
-        text-align: center;
-      }
-
-      .welcome-title {
-        font-size: 2.5rem;
-      }
-
-      .container {
-        padding: 2rem 1rem;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SM Stock Alerts — Free Daily Stock Pick via Text</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="bg-animation"></div>
-
-  <header class="header">
-    <div class="logo">
-      <div class="logo-icon">PA</div>
-      <div class="logo-text">Process <span>Assistant</span> Dashboard</div>
+<div class="grid-bg"></div>
+<div class="glow-orb"></div>
+<div class="glow-orb-2"></div>
+<nav>
+    <div class="logo">SM<span>.</span>Alerts</div>
+    <div class="nav-badge">100% FREE</div>
+</nav>
+<div class="ticker-tape" style="margin-top:60px;">
+    <div class="ticker-tape-inner" id="tickerTape">
+        <div class="ticker-item"><span class="symbol">NVDA</span> <span class="up">+3.42%</span></div>
+        <div class="ticker-item"><span class="symbol">AAPL</span> <span class="up">+1.18%</span></div>
+        <div class="ticker-item"><span class="symbol">TSLA</span> <span class="down">-2.05%</span></div>
+        <div class="ticker-item"><span class="symbol">AMD</span> <span class="up">+4.67%</span></div>
+        <div class="ticker-item"><span class="symbol">PLTR</span> <span class="up">+5.21%</span></div>
+        <div class="ticker-item"><span class="symbol">META</span> <span class="up">+0.89%</span></div>
+        <div class="ticker-item"><span class="symbol">SOFI</span> <span class="up">+6.14%</span></div>
+        <div class="ticker-item"><span class="symbol">GOOGL</span> <span class="down">-0.43%</span></div>
+        <div class="ticker-item"><span class="symbol">COIN</span> <span class="up">+3.88%</span></div>
+        <div class="ticker-item"><span class="symbol">AMZN</span> <span class="up">+1.55%</span></div>
+        <div class="ticker-item"><span class="symbol">NVDA</span> <span class="up">+3.42%</span></div>
+        <div class="ticker-item"><span class="symbol">AAPL</span> <span class="up">+1.18%</span></div>
+        <div class="ticker-item"><span class="symbol">TSLA</span> <span class="down">-2.05%</span></div>
+        <div class="ticker-item"><span class="symbol">AMD</span> <span class="up">+4.67%</span></div>
+        <div class="ticker-item"><span class="symbol">PLTR</span> <span class="up">+5.21%</span></div>
+        <div class="ticker-item"><span class="symbol">META</span> <span class="up">+0.89%</span></div>
+        <div class="ticker-item"><span class="symbol">SOFI</span> <span class="up">+6.14%</span></div>
+        <div class="ticker-item"><span class="symbol">GOOGL</span> <span class="down">-0.43%</span></div>
+        <div class="ticker-item"><span class="symbol">COIN</span> <span class="up">+3.88%</span></div>
+        <div class="ticker-item"><span class="symbol">AMZN</span> <span class="up">+1.55%</span></div>
     </div>
-    <div class="header-time">
-      <div class="current-time" id="currentTime">--:--:--</div>
-      <div class="current-date" id="currentDate">Loading...</div>
+</div>
+<section class="hero">
+    <div class="hero-content">
+        <div class="pill"><div class="pill-dot"></div>Scanning 40+ stocks daily</div>
+        <h1>1 Free Stock Pick.<br><span class="highlight">Every Morning.<br>Straight to Your Phone.</span></h1>
+        <p class="hero-sub">Our scanner analyzes 40+ stocks before market open and texts you the biggest mover. No app download. No account. Just your phone number.</p>
+        <div class="signup-form" id="signupForm">
+            <div class="form-group"><label>Your Name</label><input type="text" id="name" placeholder="First name" autocomplete="given-name"></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="(555) 123-4567" autocomplete="tel" required></div>
+            <div class="form-group"><label>Email (optional)</label><input type="email" id="email" placeholder="you@email.com" autocomplete="email"></div>
+            <button class="btn-signup" id="submitBtn" onclick="subscribe()">Get My Free Stock Alerts →</button>
+            <p class="form-note">Free forever. 1 text/day. Reply STOP anytime.</p>
+            <div class="form-message" id="formMessage"></div>
+        </div>
+        <div class="phone-preview">
+            <div class="phone-header">SM.Alerts • Today 8:57 AM</div>
+            <div class="sms-bubble">📈 <strong>SM Stock Alert</strong> 📈<br><br><span class="ticker">NVDA</span> - NVIDIA Corporation<br>💰 <span class="price">$142.58 (+4.67%)</span><br>📊 High: $143.20 | Low: $136.91<br>🏷️ Sector: Technology<br><br>Up 4.67% - leading gainer in today's scan<br><br><span style="color:#8899aa;font-size:0.8rem;">— SM Digital Solutions</span></div>
+            <div class="sms-time">Delivered ✓</div>
+        </div>
     </div>
-  </header>
-
-  <div class="container">
-    <div class="welcome-section">
-      <h1 class="welcome-title">Welcome, Process Assistant</h1>
-      <p class="welcome-subtitle">Select a module below to manage your shift operations, track staffing, and monitor performance.</p>
+</section>
+<div class="stats-bar">
+    <div class="stat"><div class="stat-number" id="statSubscribers">0</div><div class="stat-label">Subscribers</div></div>
+    <div class="stat"><div class="stat-number" id="statAlerts">0</div><div class="stat-label">Alerts Sent</div></div>
+    <div class="stat"><div class="stat-number">40+</div><div class="stat-label">Stocks Scanned</div></div>
+    <div class="stat"><div class="stat-number">$0</div><div class="stat-label">Cost to You</div></div>
+</div>
+<section class="features">
+    <div class="features-header"><h2>Why Traders Love SM Alerts</h2><p>Built by a trader, for traders who don't have time to stare at charts all day.</p></div>
+    <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">⏰</div><h3>Before Market Open</h3><p>Get your alert at 9:00 AM ET every market day. Know what's moving before you even open your broker.</p></div>
+        <div class="feature-card"><div class="feature-icon">🔍</div><h3>Scanner Does the Work</h3><p>We scan 40+ stocks across tech, finance, healthcare, energy, and trending tickers to find the biggest mover.</p></div>
+        <div class="feature-card"><div class="feature-icon">📱</div><h3>Just a Text Message</h3><p>No app to download. No login. No password. Just your phone number and you're in.</p></div>
+        <div class="feature-card"><div class="feature-icon">🛡️</div><h3>Zero Spam Promise</h3><p>1 text per market day. That's it. No upsell texts, no weekend spam. Reply STOP anytime.</p></div>
+        <div class="feature-card"><div class="feature-icon">💎</div><h3>100% Free</h3><p>No credit card. No trial that auto-charges. Free alerts forever. We're building trust first.</p></div>
+        <div class="feature-card"><div class="feature-icon">🚀</div><h3>Built by SM Digital</h3><p>From the creators of Project Hope automated trading. Real tools built by real traders.</p></div>
     </div>
-
-    <div class="nav-grid">
-      <!-- PPH Flow Staffing Card -->
-      <a href="amazon-pa-pph-flow.html" class="nav-card pph">
-        <div class="nav-card-icon">📊</div>
-        <h2 class="nav-card-title">PPH Flow Staffing</h2>
-        <p class="nav-card-description">
-          Manage inbound sort operations including induct, stow, P2B staffing, cluster volumes, and real-time flow tracking.
-        </p>
-        <div class="nav-card-features">
-          <span class="feature-tag">Belt Run Time</span>
-          <span class="feature-tag">HC Tracking</span>
-          <span class="feature-tag">Flow Rates</span>
-          <span class="feature-tag">Break Status</span>
-        </div>
-        <div class="nav-card-arrow">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </div>
-      </a>
-
-      <!-- Sort Wash Card -->
-      <a href="amazon-pa-sort-wash.html" class="nav-card sort disabled">
-        <span class="coming-soon">Coming Soon</span>
-        <div class="nav-card-icon">🔄</div>
-        <h2 class="nav-card-title">Sort Wash</h2>
-        <p class="nav-card-description">
-          Track sort wash operations, monitor throughput, manage staffing levels, and ensure smooth sortation flow.
-        </p>
-        <div class="nav-card-features">
-          <span class="feature-tag">Sort Rates</span>
-          <span class="feature-tag">Staffing</span>
-          <span class="feature-tag">Throughput</span>
-        </div>
-        <div class="nav-card-arrow">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </div>
-      </a>
-
-      <!-- Pick Wash Card -->
-      <a href="amazon-pa-pick-wash.html" class="nav-card pick disabled">
-        <span class="coming-soon">Coming Soon</span>
-        <div class="nav-card-icon">🎯</div>
-        <h2 class="nav-card-title">Pick Wash</h2>
-        <p class="nav-card-description">
-          Monitor outbound pick operations, manage picker staffing, track pick rates, and optimize labor allocation.
-        </p>
-        <div class="nav-card-features">
-          <span class="feature-tag">Pick Rates</span>
-          <span class="feature-tag">UPH Tracking</span>
-          <span class="feature-tag">Labor Planning</span>
-        </div>
-        <div class="nav-card-arrow">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </div>
-      </a>
-    </div>
-  </div>
-
-  <div class="footer">
-    Process Assistant Dashboard • Built for FC Operations
-  </div>
-
-  <script>
-    function updateTime() {
-      const now = new Date();
-      document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true 
-      });
-      document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-    }
-    setInterval(updateTime, 1000);
-    updateTime();
-  </script>
+</section>
+<section class="scanner-tease">
+    <h2>🔜 Full Scanner Coming Soon</h2>
+    <p>Real-time stock scanner with gainers, losers, volume spikes, sector filters, and custom alerts. Join the waitlist to get early access.</p>
+    <div class="waitlist-form"><input type="email" id="waitlistEmail" placeholder="Enter your email"><button class="btn-waitlist" onclick="joinWaitlist()">Join Waitlist</button></div>
+    <div class="form-message" id="waitlistMessage" style="margin-top:16px;"></div>
+</section>
+<footer>
+    <div class="footer-brand">SM Digital Solutions</div>
+    <p>SM Stock Alerts is for informational purposes only. Not financial advice.<br>By signing up, you agree to receive SMS messages. Msg & data rates may apply.<br><br><a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a></p>
+</footer>
+<style>
+:root{--bg-dark:#0a0e17;--bg-card:#111827;--green:#00e676;--green-dim:#00c85340;--red:#ff3d57;--blue:#3b82f6;--text:#e8edf5;--text-dim:#8899aa;--border:#1e2d3d;--gradient:linear-gradient(135deg,#00e676,#00b8d4)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg-dark);color:var(--text);overflow-x:hidden}
+.grid-bg{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,230,118,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,230,118,0.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,230,118,0.08) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none;z-index:0}
+.glow-orb-2{position:fixed;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.06) 0%,transparent 70%);bottom:-150px;left:-150px;pointer-events:none;z-index:0}
+nav{position:fixed;top:0;width:100%;padding:18px 32px;display:flex;justify-content:space-between;align-items:center;z-index:100;background:rgba(10,14,23,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Space Mono',monospace;font-size:1.25rem;font-weight:700;color:var(--text)}.logo span{color:var(--green)}
+.nav-badge{font-size:0.7rem;background:var(--green-dim);color:var(--green);padding:4px 10px;border-radius:20px;font-weight:500;letter-spacing:0.5px}
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:120px 24px 80px}
+.hero-content{max-width:640px;text-align:center}
+.pill{display:inline-flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border);padding:8px 18px;border-radius:100px;font-size:0.85rem;color:var(--text-dim);margin-bottom:32px}
+.pill-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,230,118,0.4)}50%{opacity:0.8;box-shadow:0 0 0 8px rgba(0,230,118,0)}}
+h1{font-size:clamp(2.4rem,6vw,3.8rem);font-weight:700;line-height:1.1;margin-bottom:20px;letter-spacing:-1.5px}
+h1 .highlight{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.15rem;color:var(--text-dim);line-height:1.6;margin-bottom:40px;max-width:500px;margin-left:auto;margin-right:auto}
+.signup-form{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:440px;margin:0 auto 24px}
+.form-group{margin-bottom:16px}.form-group label{display:block;font-size:0.8rem;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;font-family:'Space Mono',monospace}
+.form-group input{width:100%;padding:14px 16px;background:var(--bg-dark);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:1rem;font-family:'DM Sans',sans-serif;transition:border-color 0.3s}
+.form-group input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px var(--green-dim)}
+.form-group input::placeholder{color:#4a5568}
+.btn-signup{width:100%;padding:16px;background:var(--gradient);border:none;border-radius:10px;color:#0a0e17;font-size:1.05rem;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:transform 0.2s,box-shadow 0.3s;letter-spacing:0.3px}
+.btn-signup:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,230,118,0.3)}
+.btn-signup:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.form-note{text-align:center;font-size:0.8rem;color:var(--text-dim);margin-top:12px}
+.form-message{text-align:center;padding:12px;border-radius:8px;margin-top:16px;font-size:0.9rem;display:none}
+.form-message.success{display:block;background:rgba(0,230,118,0.1);color:var(--green);border:1px solid rgba(0,230,118,0.2)}
+.form-message.error{display:block;background:rgba(255,61,87,0.1);color:var(--red);border:1px solid rgba(255,61,87,0.2)}
+.phone-preview{max-width:360px;margin:48px auto 0;background:#1a1a2e;border-radius:24px;padding:20px;border:1px solid var(--border)}
+.phone-header{text-align:center;font-size:0.75rem;color:var(--text-dim);margin-bottom:16px;font-family:'Space Mono',monospace}
+.sms-bubble{background:#2a2a4a;border-radius:18px 18px 18px 4px;padding:16px;font-size:0.88rem;line-height:1.55;color:var(--text);animation:fadeSlideUp 0.8s ease-out}
+.sms-bubble .ticker{color:var(--green);font-weight:700;font-family:'Space Mono',monospace}
+.sms-bubble .price{font-family:'Space Mono',monospace}
+.sms-time{text-align:right;font-size:0.7rem;color:var(--text-dim);margin-top:6px}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.features{position:relative;z-index:1;padding:80px 24px;max-width:1000px;margin:0 auto}
+.features-header{text-align:center;margin-bottom:60px}.features-header h2{font-size:2rem;font-weight:700;letter-spacing:-0.8px;margin-bottom:12px}.features-header p{color:var(--text-dim);font-size:1.05rem}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.feature-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:28px;transition:transform 0.3s,border-color 0.3s}
+.feature-card:hover{transform:translateY(-4px);border-color:var(--green)}
+.feature-icon{font-size:2rem;margin-bottom:16px}.feature-card h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}.feature-card p{color:var(--text-dim);font-size:0.9rem;line-height:1.5}
+.stats-bar{position:relative;z-index:1;display:flex;justify-content:center;gap:48px;flex-wrap:wrap;padding:40px 24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 auto;max-width:800px}
+.stat{text-align:center}.stat-number{font-family:'Space Mono',monospace;font-size:2rem;font-weight:700;color:var(--green)}.stat-label{font-size:0.8rem;color:var(--text-dim);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px}
+.scanner-tease{position:relative;z-index:1;max-width:700px;margin:80px auto;padding:48px 32px;text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.scanner-tease::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:var(--gradient)}
+.scanner-tease h2{font-size:1.6rem;margin-bottom:12px}.scanner-tease p{color:var(--text-dim);margin-bottom:28px;font-size:1rem}
+.waitlist-form{display:flex;gap:12px;max-width:400px;margin:0 auto}
+.waitlist-form input{flex:1;padding:14px 16px;background:var(--bg-dark);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.95rem;font-family:'DM Sans',sans-serif}
+.waitlist-form input:focus{outline:none;border-color:var(--blue)}
+.btn-waitlist{padding:14px 24px;background:var(--blue);border:none;border-radius:10px;color:white;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.3s;white-space:nowrap}
+.btn-waitlist:hover{background:#2563eb}
+footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:0.8rem}
+footer a{color:var(--green);text-decoration:none}.footer-brand{font-family:'Space Mono',monospace;font-weight:700;color:var(--text);margin-bottom:8px}
+.ticker-tape{position:relative;z-index:1;overflow:hidden;background:var(--bg-card);border-bottom:1px solid var(--border);padding:10px 0;font-family:'Space Mono',monospace;font-size:0.8rem}
+.ticker-tape-inner{display:flex;gap:40px;animation:scroll-tape 30s linear infinite;width:max-content}
+.ticker-item{display:flex;align-items:center;gap:8px;white-space:nowrap}.ticker-item .symbol{color:var(--text);font-weight:700}.ticker-item .up{color:var(--green)}.ticker-item .down{color:var(--red)}
+@keyframes scroll-tape{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(max-width:600px){nav{padding:14px 20px}.hero{padding:100px 20px 60px}.signup-form{padding:24px 20px}.stats-bar{gap:32px}.waitlist-form{flex-direction:column}.scanner-tease{margin:60px 20px;padding:36px 20px}.features{padding:60px 20px}}
+</style>
+<script>
+document.getElementById('phone').addEventListener('input',function(e){let v=e.target.value.replace(/\D/g,'');if(v.length>10)v=v.slice(0,10);if(v.length>=7)v='('+v.slice(0,3)+') '+v.slice(3,6)+'-'+v.slice(6);else if(v.length>=4)v='('+v.slice(0,3)+') '+v.slice(3);else if(v.length>=1)v='('+v;e.target.value=v});
+async function subscribe(){const btn=document.getElementById('submitBtn');const msg=document.getElementById('formMessage');const phone=document.getElementById('phone').value;const name=document.getElementById('name').value;const email=document.getElementById('email').value;if(!phone||phone.replace(/\D/g,'').length<10){msg.className='form-message error';msg.textContent='Please enter a valid 10-digit phone number.';return}btn.disabled=true;btn.textContent='Signing up...';try{const res=await fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,name,email,source:'landing_page'})});const data=await res.json();if(res.ok){msg.className='form-message success';msg.textContent=data.message;btn.textContent="You're In! 🎉";document.getElementById('phone').value='';document.getElementById('name').value='';document.getElementById('email').value='';loadStats()}else{msg.className='form-message error';msg.textContent=data.error;btn.disabled=false;btn.textContent='Get My Free Stock Alerts →'}}catch(err){msg.className='form-message error';msg.textContent='Connection error. Please try again.';btn.disabled=false;btn.textContent='Get My Free Stock Alerts →'}}
+async function joinWaitlist(){const email=document.getElementById('waitlistEmail').value;const msg=document.getElementById('waitlistMessage');if(!email||!email.includes('@')){msg.className='form-message error';msg.textContent='Please enter a valid email.';return}msg.className='form-message success';msg.textContent="You're on the list! We'll notify you when the scanner launches. 🚀";document.getElementById('waitlistEmail').value=''}
+async function loadStats(){try{const res=await fetch('/api/stats');const data=await res.json();document.getElementById('statSubscribers').textContent=data.subscribers||'0';document.getElementById('statAlerts').textContent=data.alertsSent||'0'}catch(e){}}
+document.getElementById('phone').addEventListener('keypress',function(e){if(e.key==='Enter')subscribe()});
+loadStats();
+</script>
 </body>
 </html>
