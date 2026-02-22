@@ -11,7 +11,6 @@ function initTwilio() {
     console.log('✅ Twilio initialized');
 }
 
-// Send SMS to a single number
 async function sendSMS(to, message) {
     try {
         const result = await client.messages.create({
@@ -26,50 +25,32 @@ async function sendSMS(to, message) {
     }
 }
 
-// Format the alert message
 function formatAlertMessage(pick) {
-    const sign = pick.percentChange >= 0 ? "+" : "";
+    const sign = pick.percentChange >= 0 ? '+' : '';
+    const price = pick.currentPrice ? parseFloat(pick.currentPrice).toFixed(2) : pick.price ? parseFloat(pick.price).toFixed(2) : '0.00';
 
-    let price = pick.currentPrice ? pick.currentPrice.toFixed(2) : pick.price ? pick.price.toFixed(2) : "0.00";
+    let msg = `SM Alert: ${pick.ticker} $${price} (${sign}${parseFloat(pick.percentChange).toFixed(2)}%)`;
 
-    let msg = "📈 SM Stock Alert 📈\n\n";
-    msg += pick.ticker + " - " + (pick.companyName || pick.company || pick.ticker) + "\n";
-    msg += "💰 $" + price + " (" + sign + pick.percentChange.toFixed(2) + "%)\n";
-    msg += "🏷️ Sector: " + (pick.sector || "N/A");
+    if (pick.entry) msg += `\nEntry $${parseFloat(pick.entry).toFixed(2)}`;
+    if (pick.takeProfit) msg += ` | TP $${parseFloat(pick.takeProfit).toFixed(2)}`;
+    if (pick.stopLoss) msg += ` | SL $${parseFloat(pick.stopLoss).toFixed(2)}`;
 
-    if (pick.entry) {
-        msg += "\n\n🎯 Entry: $" + parseFloat(pick.entry).toFixed(2);
-    }
-    if (pick.takeProfit) {
-        msg += "\n✅ Take Profit: $" + parseFloat(pick.takeProfit).toFixed(2);
-    }
-    if (pick.stopLoss) {
-        msg += "\n🛑 Stop Loss: $" + parseFloat(pick.stopLoss).toFixed(2);
-    }
+    if (pick.reason || pick.setup) msg += `\n${(pick.reason || pick.setup).substring(0, 60)}`;
 
-    if (pick.setup) {
-        msg += "\n\n📊 " + pick.setup;
-    } else if (pick.reason) {
-        msg += "\n\n📊 " + pick.reason;
-    }
-
-    msg += "\n\n— SM Digital Solutions\nReply STOP to unsubscribe";
-
+    msg += '\n-SM Digital | STOP to unsub';
     return msg;
 }
-// Blast alert to all active subscribers
+
 async function sendAlertToAll(pick) {
     const message = formatAlertMessage(pick);
 
-    // Save alert to database
     const alertResult = await pool.query(
         `INSERT INTO alerts (ticker, company_name, alert_price, percent_change, sector, reason)
          VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-        [pick.ticker, pick.companyName, pick.currentPrice, pick.percentChange, pick.sector, pick.reason]
+        [pick.ticker, pick.companyName || pick.ticker, pick.currentPrice || pick.price, pick.percentChange, pick.sector, pick.reason]
     );
     const alertId = alertResult.rows[0].id;
 
-    // Get all active subscribers
     const subscribers = await pool.query(
         `SELECT id, phone FROM subscribers WHERE status = 'active'`
     );
@@ -82,24 +63,18 @@ async function sendAlertToAll(pick) {
     for (const sub of subscribers.rows) {
         const result = await sendSMS(sub.phone, message);
 
-        // Log the SMS
         await pool.query(
             `INSERT INTO sms_log (subscriber_id, alert_id, twilio_sid, status)
              VALUES ($1, $2, $3, $4)`,
             [sub.id, alertId, result.sid || null, result.success ? 'sent' : 'failed']
         );
 
-        if (result.success) {
-            sentCount++;
-        } else {
-            failCount++;
-        }
+        if (result.success) sentCount++;
+        else failCount++;
 
-        // Small delay to avoid Twilio rate limits
         await new Promise(r => setTimeout(r, 200));
     }
 
-    // Update total sent count
     await pool.query(
         `UPDATE alerts SET total_sent = $1 WHERE id = $2`,
         [sentCount, alertId]
@@ -109,20 +84,9 @@ async function sendAlertToAll(pick) {
     return { sentCount, failCount, alertId };
 }
 
-// Send welcome message to new subscriber
 async function sendWelcome(phone, name) {
-    const message = `🎉 Welcome to SM Stock Alerts${name ? ', ' + name : ''}!
-
-You'll receive 1 FREE stock pick every market morning before open.
-
-Our scanner analyzes 40+ stocks to find the biggest movers so you don't have to.
-
-Want more? The full SM Stock Scanner is coming soon. Stay tuned! 🚀
-
-— SM Digital Solutions
-Reply STOP to unsubscribe`;
-
-    return await sendSMS(phone, message);
+    const msg = `Welcome to SM Stock Alerts${name ? ' ' + name : ''}! Free stock pick every market morning. -SM Digital | STOP to unsub`;
+    return await sendSMS(phone, msg);
 }
 
 module.exports = { initTwilio, sendSMS, sendAlertToAll, sendWelcome, formatAlertMessage };
