@@ -126,4 +126,16 @@ router.post('/test-sms', adminAuth, async (req, res) => {
     }
 });
 
+
+// DELETE /api/admin/subscriber/:id
+router.delete("/subscriber/:id", adminAuth, async (req, res) => {
+    try {
+        await pool.query("DELETE FROM sms_log WHERE subscriber_id = $1", [req.params.id]);
+        const result = await pool.query("DELETE FROM subscribers WHERE id = $1 RETURNING phone", [req.params.id]);
+        if (!result.rows.length) return res.status(404).json({ error: "Not found" });
+        res.json({ message: "Deleted " + result.rows[0].phone });
+    } catch (err) {
+        res.status(500).json({ error: "Delete failed" });
+    }
+});
 module.exports = router;
