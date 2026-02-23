@@ -37,7 +37,7 @@ function formatAlertMessage(pick) {
 
     if (pick.reason || pick.setup) msg += `\n${(pick.reason || pick.setup).substring(0, 60)}`;
 
-    msg += '\n-SM Digital | STOP to unsub';
+    msg += '\nNot financial advice\n-SM Digital | STOP to unsub';
     return msg;
 }
 
@@ -85,7 +85,7 @@ async function sendAlertToAll(pick) {
 }
 
 async function sendWelcome(phone, name) {
-    const msg = `Welcome to SM Stock Alerts${name ? ' ' + name : ''}! Free stock pick every market morning. -SM Digital | STOP to unsub`;
+    const msg = `Welcome to SM Stock Alerts${name ? ' ' + name : ''}! Free stock pick every market morning. Not financial advice. -SM Digital | STOP to unsub`;
     return await sendSMS(phone, msg);
 }
 
